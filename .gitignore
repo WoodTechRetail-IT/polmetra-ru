@@ -1,0 +1,16 @@
+.htaccess
+php.ini
+robots.txt
+**/image
+**/system
+**/dumpdefault
+**/storage
+/image
+/system
+/dumpdefault
+/storage
+config.php
+.log
+/admin
+/catalog/dump-27-10-2022
+/catalog/language
