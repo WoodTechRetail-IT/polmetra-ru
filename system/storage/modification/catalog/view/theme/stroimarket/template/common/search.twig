@@ -1,0 +1,99 @@
+<div id="search" class="input-group">
+
+            {% if smartsearch %}
+                <div id="smartsearch"></div>
+                <script type="text/javascript"> 
+
+                    function smartsearch_show_all() {
+                        var url = $('base').attr('href') + 'index.php?route=product/search';
+                        var value = $('#search').find('input[name="search"]').val();
+                        if (value) {
+                            url += '&search=' + encodeURIComponent(value);
+                        }
+
+                        location = url;
+                    }
+                    $(document).mouseup(function (e) {
+                        var container = $('#search');
+                        if (container.has(e.target).length === 0){
+                            $('#smartsearch').hide();
+                        }
+                    });
+                    $(document).ready(function(){
+                        $('#search').find('input[name="search"]').focus(function(e){                    
+                            if ($('#smartsearch').find('.items>.item').length > 0) {
+                                $('#smartsearch').show();
+                            }
+                        });     
+                        $('#search').find('input[name="search"]').keyup(function(e){
+                            if (e.keyCode == 40) {
+                                if ($('#smartsearch').find('.item').length > 0) {
+                                    if ($('#smartsearch').find('.item.current').length == 0) {                                        
+                                        $('#smartsearch').find('.item').first().addClass('current')
+                                    } else {
+                                        var el = $('#smartsearch').find('.item.current');
+                                        el.removeClass('current');
+                                        if (el.next().length == 0) {
+                                            $('#smartsearch').find('.item').first().addClass('current')
+                                        } else {
+                                            el.next().addClass('current');
+                                        }                                        
+                                    }
+                                    $(this).val($('#smartsearch').find('.item.current').attr('search_name'));
+
+                                }                                
+                            }
+                            if (e.keyCode == 38) {
+                                if ($('#smartsearch').find('.item').length > 0) {
+                                    if ($('#smartsearch').find('.item.current').length == 0) {                                    
+                                        $('#smartsearch').find('.item').last().addClass('current')
+                                    } else {
+                                        var el = $('#smartsearch').find('.item.current');
+                                        el.removeClass('current');
+                                        if (el.prev().length == 0) {
+                                            $('#smartsearch').find('.item').last().addClass('current')
+                                        } else {
+                                            el.prev().addClass('current');
+                                        }                                        
+                                    }
+                                    $(this).val($('#smartsearch').find('.item.current').attr('search_name'));
+                                }
+                            }                            
+                        });                   
+                        $('#search').find('input[name="search"]').keyup(function(e){
+                            if (e.keyCode == 40 || e.keyCode == 38) {
+                                return;
+                            }
+                            var search = $(this).val();
+
+                            $.ajax({
+                                url: 'index.php?route=extension/module/smartsearch',
+                                type: 'post',
+                                data: 'search=' + search,
+                                dataType: 'json',
+                                beforeSend: function() {                                    
+                                },
+                                complete: function() {                                    
+                                },
+                                success: function(json) {
+                                    //alert(json)
+                                    if (json['html']) {
+                                        $('#smartsearch').html(json['html']);
+                                        $('#smartsearch').show();
+                                    } else {
+                                        $('#smartsearch').html('');
+                                        $('#smartsearch').hide();
+                                    }
+                                },
+                                error: function(xhr, ajaxOptions, thrownError) {
+                                    //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                }
+                            });
+                        });                        
+                    });
+                </script>
+            {% endif %}
+            
+  <input type="text" name="search" value="{{ search }}" placeholder="{{ text_search }}" />
+  <button type="button" class="search-btn btn">{{ text_search3 }}</button>
+</div>

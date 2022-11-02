@@ -1,0 +1,76 @@
+<div class="modal-dialog modal-md">
+  <div class="modal-content">
+    <div class="modal-body">
+	  <button class="boc-close" type="button" data-dismiss="modal"><i class="fi-rr-cross"></i></button>
+      <div id="boc_order_title" class="boc-title">{{ buyoneclick_title }}</div>
+      <form id="boc_form" action="" role="form">
+        <fieldset>
+          {% if buyoneclick_exan_status %}
+          <div id="source" style="display:none">
+            <input id="sb_first_typ" class="hidden" type="text" name="sb_first_typ" value="">
+            <input id="sb_first_src" class="hidden" type="text" name="sb_first_src" value="">
+            <input id="sb_first_mdm" class="hidden" type="text" name="sb_first_mdm" value="">
+            <input id="sb_first_cmp" class="hidden" type="text" name="sb_first_cmp" value="">
+            <input id="sb_first_cnt" class="hidden" type="text" name="sb_first_cnt" value="">
+            <input id="sb_first_trm" class="hidden" type="text" name="sb_first_trm" value="">
+            <input id="sb_current_typ" class="hidden" type="text" name="sb_current_typ" value="">
+            <input id="sb_current_src" class="hidden" type="text" name="sb_current_src" value="">
+            <input id="sb_current_mdm" class="hidden" type="text" name="sb_current_mdm" value="">
+            <input id="sb_current_cmp" class="hidden" type="text" name="sb_current_cmp" value="">
+            <input id="sb_current_cnt" class="hidden" type="text" name="sb_current_cnt" value="">
+            <input id="sb_current_trm" class="hidden" type="text" name="sb_current_trm" value="">
+            <input id="sb_first_add_fd" class="hidden" type="text" name="sb_first_add_fd" value="">
+            <input id="sb_first_add_ep" class="hidden" type="text" name="sb_first_add_ep" value="">
+            <input id="sb_first_add_rf" class="hidden" type="text" name="sb_first_add_rf" value="">
+            <input id="sb_current_add_fd" class="hidden" type="text" name="sb_current_add_fd" value="">
+            <input id="sb_current_add_ep" class="hidden" type="text" name="sb_current_add_ep" value="">
+            <input id="sb_current_add_rf" class="hidden" type="text" name="sb_current_add_rf" value="">
+            <input id="sb_session_pgs" class="hidden" type="text" name="sb_session_pgs" value="">
+            <input id="sb_session_cpg" class="hidden" type="text" name="sb_session_cpg" value="">
+            <input id="sb_udata_vst" class="hidden" type="text" name="sb_udata_vst" value="">
+            <input id="sb_udata_uip" class="hidden" type="text" name="sb_udata_uip" value="">
+            <input id="sb_udata_uag" class="hidden" type="text" name="sb_udata_uag" value="">
+            <input id="sb_promo_code" class="hidden" type="text" name="sb_promo_code" value="">
+          </div>
+          {% endif %}
+          <div class="boc_product_input">
+            <div class="hidden">
+              <input id="boc_product_id" type="text" name="boc_product_id">
+            </div>
+            {% if buyoneclick_field1_status %}
+            <div class="form-group {{ buyoneclick_field1_required ? ' has-warning'}}">
+              <label>{{ buyoneclick_field1_title}}</label>
+              <input id="boc_name" class="form-control{{ buyoneclick_field1_required ? ' required'}}" type="text" name="boc_name" placeholder="{{ buyoneclick_field1_title }}" value="{% if customer_info is defined and (customer_info.firstname != '' or customer_info.lastname != '') %}{{customer_info.firstname}} {{customer_info.lastname}}{% endif %}" >
+            </div>
+            {% endif %}
+            {% if buyoneclick_field2_status %}
+            <div class="form-group {{ buyoneclick_field2_required ? ' has-warning'}}">
+              <label>{{ buyoneclick_field2_title }}</label>
+              <input id="boc_phone" class="form-control{{ buyoneclick_field2_required ? ' required'}}" type="tel" name="boc_phone" placeholder="{% if buyoneclick_validation_type %}{{ buyoneclick_validation_type }}{% else %}{{ buyoneclick_field2_title }}{% endif %}" {% if buyoneclick_validation_type %}{{' data-pattern="true"'}}{% else %}{{' data-pattern="false"'}} {% endif %} value="{% if customer_info is defined and customer_info.telephone != '' %}{{customer_info.telephone}} {% endif %}" >
+            </div>
+            {% endif %}
+            {% if buyoneclick_field3_status %}
+            <div class="form-group {{ buyoneclick_field3_required ? ' has-warning'}}">
+              <label>{{ buyoneclick_field3_title }}</label>
+              <input id="boc_email" class="form-control{{ buyoneclick_field3_required ? ' required'}}" type="email" name="boc_email" placeholder="{{ buyoneclick_field3_title }}" value="{{ customer_info and customer_info.email != '' ? customer_info.email }}" >
+            </div>
+            {% endif %}
+            {% if buyoneclick_field4_status %}
+            <div class="form-group {{ buyoneclick_field4_required ? ' has-warning'}}">
+              <textarea id="boc_message" class="form-control{{ buyoneclick_field4_required ? ' required'}}" name="boc_message" rows="3" placeholder="{{ buyoneclick_field4_title }}" ></textarea>
+            </div>
+            {% endif %}
+            {% if buyoneclick_agree_status %}
+            <div class="checkbox">
+              <label>
+              <input id="boc_agree" type="checkbox" name="boc_agree" class="required" value="1"> {{ buyoneclick_text_agree }}
+              </label>
+            </div>
+            {% endif %}
+          </div>
+          <button type="submit" id="boc_submit" class="btn" onClick="clickAnalyticsSend(); return true;">{{ buyoneclick_button_order }}</button>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

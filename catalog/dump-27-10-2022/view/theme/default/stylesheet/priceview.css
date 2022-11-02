@@ -1,0 +1,34 @@
+.product-price td{
+    position: relative;
+    vertical-align: middle!important;
+}
+.product-price .image img{
+    max-width: 70px;
+}
+.product-price .product-label{
+    display: none;
+}
+.product-price .price span{
+    display: block;
+}
+.product-price .price-new {
+    font-weight: 600;
+}
+.product-price .price-old {
+    color: #999;
+    text-decoration: line-through;
+}
+.product-price .button-group button {
+    display: none;
+}
+.product-price .button-group button:first-child {
+    display:block;
+    border: none;
+    background-color: #eee;
+    color: #888;
+    line-height: 38px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    min-width: 100px;
+}

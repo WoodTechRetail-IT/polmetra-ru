@@ -1,0 +1,35 @@
+<div class="text-title">
+  <div class="shadow-title">Просмотренные товары</div>
+  <div class="title-content">{{ heading_title }}</div>
+</div>
+<div class="viewed-module">
+  <div class="row">
+    {% for product in products %}
+    <div class="viewed-layout col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12">
+      <div class="viewed-thumb">
+        <a href="{{ product.href }}">
+          <div class="viewed-caption">
+            <div class="viewed-image">
+              <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" />
+            </div>
+            <div class="viewed-info">
+              <div class="viewed-name">{{ product.name }}</div>
+              {% if product.price %}
+              <div class="viewed-price">
+                <div class="viewed-price__block">
+                  {% if not product.special %}
+                  <span class="viewed-price__main">{{ product.price }}</span>
+                  {% else %}
+                  <span class="viewed-price__new">{{ product.special }}</span>
+                  {% endif %}
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>

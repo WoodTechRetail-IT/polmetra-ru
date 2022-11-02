@@ -1,0 +1,22 @@
+.block-readmore{
+	border-top: 1px solid #DDDDDD;
+    color: #444;
+    margin: 25px auto 0;
+    text-align: center;
+}
+.block-readmore a{
+	background: #fff;
+    display: inline-block;
+    padding: 0 20px;
+    position: relative;
+    top: -12px;
+	font-size:14px;
+}
+.block-readmore a i{
+    padding: 0 0 0 7px;
+	font-size:16px;
+}
+.button-collapse a{
+	width:100%;
+	font-size:14px;
+}

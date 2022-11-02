@@ -1,0 +1,151 @@
+{{ '<?xml version="1.0" encoding="UTF-8"?>' ~ "\n" }}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="{{ direction }}" lang="{{ language }}" xml:lang="{{ language }}">
+<head>
+    <title>{{ title }}</title>
+    <base href="{{ base }}"/>
+    <link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/neoseo_cash_memo.css"/>
+</head>
+<body>
+<div style="width: 700px">
+    {% set order_count = orders|length %} {% set order_index = 0 %} {% for order in orders %} {% set order_index=order_index+1 %}
+        {% if ( order_index > 0 and order_index < order_count ) %}
+            <div style="page-break-after: always;" >
+        {% else %}
+            <div>
+        {% endif %}
+        <table width="100%">
+            <tr>
+                <td>
+                    <table>
+                        {% if ( order['store_owner'] ) %}
+                            <tr>
+                                <th align="right">{{ text_provider }}</th>
+                                <td>{{ order['store_owner'] }}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <th align="right">{{ text_customer }}</th>
+                            <td>{{ order['customer_info'] }}</td>
+                        </tr>
+                        <tr>
+                            <th align="right">{{ text_payment }}</th>
+                            <td>{{ order['payment_info'] }}</td>
+                        </tr>
+                        <tr>
+                            <th align="right">{{ text_shipping }}</th>
+                            <td>{{ order['shipping_info'] }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <br/>
+        <center>
+            <h3>{{ text_product_order ~ " №" ~ order['order_id'] ~ " " ~ text_from ~ " " ~ order['date'] }}</h3>
+        </center>
+        <br/>
+        <br/>
+        <table class="product">
+            <tr class="heading">
+                <td>{{ column_id }}</td>
+                <td>{{ column_product }}</td>
+                {% if ( neoseo_cash_memo_column_sku_status == 1 ) %}
+                    <td align="right">{{ column_sku }}</td>
+                {% endif %}
+                {% if ( neoseo_cash_memo_column_model_status == 1 ) %}
+                    <td align="right">{{ column_model }}</td>
+                {% endif %}
+                <td align="right">{{ column_count }}</td>
+                {% if ( neoseo_cash_memo_column_unit_status == 1 ) %}
+                    <td align="right">{{ column_weight_class }}</td>
+                {% endif %}
+                <td align="right">{{ column_price }}</td>
+                <td align="right">{{ column_sum }}</td>
+            </tr>
+            {% set i = 0 %} {% for product in order['product'] %} {% set i = i + 1 %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td>
+                        {% if ( neoseo_cash_memo_column_image_status is defined and neoseo_cash_memo_column_image_status == 1 ) %}
+                            <img src="{{ product['image'] }}" style="float:left">
+                        {% endif %}
+
+                        {{ product['name'] }}
+                        {% for option in product['option'] %}
+
+                            {% if ( neoseo_cash_memo_column_option_status == 1 ) %}
+                                <br/>
+                                &nbsp;
+                                <small> - {{ option['name'] }}: {{ option['value'] }}</small>
+                            {% elseif ( neoseo_cash_memo_column_option_status == 2 ) %}
+                                {{ " : " ~ option['value'] }}
+
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if ( neoseo_cash_memo_column_sku_status == 2 and product['sku'] ) %}
+                            <br/>
+                            &nbsp;
+                            <small> - {{ text_sku }}: {{ product['sku'] }}</small>
+                        {% endif %}
+
+                        {% if ( neoseo_cash_memo_column_model_status == 2 and product['model'] ) %}
+                            <br/>
+                            &nbsp;
+                            <small> - {{ text_model }}: {{ product['model'] }}</small>
+                        {% endif %}
+                    </td>
+                    {% if ( neoseo_cash_memo_column_sku_status == 1 ) %}
+                        <td align="right">{{ product['sku'] }}</td>
+                    {% endif %}
+                    {% if ( neoseo_cash_memo_column_model_status == 1 ) %}
+                        <td align="right">{{ product['model'] }}</td>
+                    {% endif %}
+                    <td align="right">{{ product['quantity'] }}</td>
+                    {% if ( neoseo_cash_memo_column_unit_status == 1 ) %}
+                        <td align="right">{{ product.weight_class }}</td>
+                    {% endif %}
+                    <td align="right">
+                        <nobr>{{ product['price'] }}</nobr>
+                    </td>
+                    <td align="right">
+                        <nobr>{{ product['total'] }}</nobr>
+                    </td>
+                </tr>
+            {% endfor %}
+            {% for voucher in order['voucher'] %}
+                <tr>
+                    <td align="left">{{ voucher['description'] }}</td>
+                    <td align="left"></td>
+                    <td align="right">1</td>
+                    <td align="right">{{ voucher['amount'] }}</td>
+                    <td align="right">{{ voucher['amount'] }}</td>
+                </tr>
+            {% endfor %}
+            {% for total in order['total'] %}
+
+                <tr>
+                    {% set colspan = 4 %}
+                    {% if ( neoseo_cash_memo_column_sku_status == 1 ) %}
+                        {% set colspan =colspan+1 %}
+                    {% endif %}
+                    {% if ( neoseo_cash_memo_column_model_status == 1 ) %}
+                        {% set colspan =colspan+1 %}
+                    {% endif %}
+                    {% if ( neoseo_cash_memo_column_unit_status == 1 ) %}
+                        {% set colspan =colspan+1 %}
+                    {% endif %}
+
+                    <td align="right" colspan="{{ colspan }}"><b>{{ total['title'] }}:</b></td>
+                    <td align="right">{{ total['text'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        </div>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <name>NeoSeo ShippingPlus</name>
+    <version>1.0</version>
+    <code>neoseo-shippingplus</code>
+    <author>NeoSeo</author>
+    <link>http://neoseo.com.ua/</link>
+
+    <file path="admin/controller/localisation/country.php">
+        <operation>
+            <search><![CDATA[$data['status'] = '1';]]></search>
+            <add position="after" offset="1"><![CDATA[		/* NeoSeo ShippingPlus - begin */
+		$data['neoseo_shippingplus_status'] = $this->config->get('neoseo_shippingplus_status');
+		if (isset($this->request->post['shippingplus_zone'])) {
+			$data['shippingplus_zone'] = $this->request->post['shippingplus_zone'];
+		} elseif (!empty($country_info)) {
+			$data['shippingplus_zone'] = $country_info['shippingplus_zone'];
+		} else {
+			$data['shippingplus_zone'] = '0';
+		}
+		/* NeoSeo ShippingPlus - end */]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/model/localisation/country.php">
+        <operation>
+            <search><![CDATA[public function getCountries($data = array()) {]]></search>
+            <add position="after"><![CDATA[		/* NeoSeo ShippingPlus - begin */
+		if ($this->config->get('neoseo_shippingplus_status') == 1) {
+			$sql = "SHOW COLUMNS FROM `" . DB_PREFIX . "country` LIKE 'shippingplus_zone'";
+			$query = $this->db->query($sql);
+			if (!$query->num_rows) {
+				$sql = "ALTER TABLE `" . DB_PREFIX . "country` ADD `shippingplus_zone` int(11) DEFAULT NULL";
+				$this->db->query($sql);
+			}
+		}
+		/* NeoSeo ShippingPlus - end */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "'");]]></search>
+            <add position="replace"><![CDATA[		/* NeoSeo ShippingPlus - begin */
+		if ($this->config->get('neoseo_shippingplus_status') == 1) {
+			$this->db->query("INSERT INTO " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "', shippingplus_zone = '" . (int)$data['shippingplus_zone'] . "' ");
+		}else{
+			$this->db->query("INSERT INTO " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "'");
+		}
+		/* NeoSeo ShippingPlus - end */]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "' WHERE country_id = '" . (int)$country_id . "'");]]></search>
+            <add position="replace"><![CDATA[		/* NeoSeo ShippingPlus - begin */
+		if ($this->config->get('neoseo_shippingplus_status') == 1) {
+			$this->db->query("UPDATE " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "', shippingplus_zone = '" . (int)$data['shippingplus_zone'] . "' WHERE country_id = '" . (int)$country_id . "' ");
+
+		}else{
+			$this->db->query("UPDATE " . DB_PREFIX . "country SET name = '" . $this->db->escape($data['name']) . "', iso_code_2 = '" . $this->db->escape($data['iso_code_2']) . "', iso_code_3 = '" . $this->db->escape($data['iso_code_3']) . "', address_format = '" . $this->db->escape($data['address_format']) . "', postcode_required = '" . (int)$data['postcode_required'] . "', status = '" . (int)$data['status'] . "' WHERE country_id = '" . (int)$country_id . "'");
+		}
+		/* NeoSeo ShippingPlus - end */]]></add>
+        </operation>
+    </file>
+
+    <file path="admin/view/template/localisation/{country_form.twig,neoseo_country_form.twig}">
+        <operation>
+            <search><![CDATA[<label class="col-sm-2 control-label" for="input-iso-code-3">{{ entry_iso_code_3 }}</label>]]></search>
+            <add position="before" offset="1"><![CDATA[
+              {% if neoseo_shippingplus_status is defined and neoseo_shippingplus_status == 1%}
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-shippingplus-zone">Связь с зоной - Доставка плюс</label>
+                <div class="col-sm-10">
+                  <select name="shippingplus_zone" id="input-shippingplus-zone" class="form-control">
+                    <option value="0">Не выбрано</option>
+                    {% for shippingplus in shippingplus_zones %}
+                    {% if shippingplus.zone == shippingplus_zone %}
+                    <option value="{{ shippingplus.zone }}" selected="selected">{{ shippingplus.zone }}</option>
+                    {% else %}
+                    <option value="{{ shippingplus.zone }}">{{ shippingplus.zone }}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              {% endif %}]]></add>
+        </operation>
+    </file>
+
+</modification>

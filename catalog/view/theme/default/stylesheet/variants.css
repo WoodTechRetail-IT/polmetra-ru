@@ -1,0 +1,4 @@
+.product_variants {margin-right:10px;}
+.product_variants img {-webkit-transition: 0.2s; /* Safari */
+    transition: 0.2s;}
+.product_variants img:hover {border: 1px solid #999;}

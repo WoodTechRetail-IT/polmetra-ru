@@ -1,0 +1,173 @@
+<div class="moregoods-row swdmoregoods top-space" id="moregoods-content">
+{% if head_name %}
+<h3>{{ head_name }}</h3>
+{% endif %}
+{% for product in more_products %}
+<div class="product-layout {{ swdcol }} swd-sm-6 swd-xs-12">
+    <div class="product-thumb transition {{ thumbr_class }}">
+      <div class="image"><a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a></div>
+      
+	  <div class="caption">
+        <h4><a href="{{ product.href }}">{{ product.name }}</a></h4>
+        <p><!-- {{ product.description }} --></p>
+        {% if product.rating %}
+        <div class="rating">
+          {% for i in 5 %}
+          {% if product.rating < i %}
+          <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span>
+          {% else %}
+          <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if product.price %}
+        <p class="price">
+          {% if not product.special %}
+          {{ product.price }}
+          {% else %}
+          <span class="price-new">{{ product.special }}</span> <span class="price-old">{{ product.price }}</span>
+          {% endif %}
+          {% if product.tax %}
+          <span class="price-tax">{{ text_tax }} {{ product.tax }}</span>
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+      <div class="button-group">
+        <button type="button" onclick="cart.add('{{ product.product_id }}');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ button_cart }}</span></button>
+        <button type="button" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
+        <button type="button" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fa fa-exchange"></i></button>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% if swd_scroll %}
+<!-- Включен scroll -->
+<div class="moregoods-row btn-swdmoregoods">
+  <div class="col-md-12 text-center swdload-gif"> 
+  </div> 
+</div>
+{% else %}
+<!-- Кнопка Показать еще -->
+<div class="moregoods-row btn-swdmoregoods">
+  <div class="col-md-12 text-center swdload-gif"> 
+    <button type="button" class="btn btn-primary" id="swdgoods-morebtn">{{ loading_more_btn }}</button>
+  </div> 
+</div>
+{% endif %}
+<script type="text/javascript"><!--
+$(document).ready(function() {
+
+    var load_gif = '{{ loadgif }}';
+	var isProgress = false;
+	var instartFrom  = {{ instart_from }};
+	
+    {% if swd_scroll %}
+	$(window).scroll(function() {
+	    
+		var dataStr = {
+	    	start: instartFrom,
+	    	mod_id: {{ modul_id }},
+			limit_load: {{ instart_from_load }} 
+	        };
+	
+	    var $swd_element = $('#moregoods-content');
+	    var swd_scroll = $(window).scrollTop() + $(window).height();
+	    var swd_offset = $swd_element.offset().top + $swd_element.height() + 10;
+	
+		if(swd_scroll > swd_offset && !isProgress) {
+			isProgress = true;
+			
+			$.ajax({
+				type: 'POST',
+			 	url: 'index.php?route=extension/module/more_goods/swd_more',
+				dataType: 'json',
+				data: dataStr,
+				cache: false,
+				beforeSend: function(){
+        	   		$('.swdload-gif').prepend('<div><img src="' + load_gif + '" /></div>').show();
+       		 	},
+				success: function(json){
+					
+					if(json.success != 'error') {
+					
+				   	    if(json.success) {
+					        setTimeout(function(){
+						            $('.swdload-gif img').remove();
+						            $("#moregoods-content").append(json.response);
+								   }, 500);
+						
+		                    setTimeout(function(){ isProgress = false; }, 700);
+						    instartFrom += {{ instart_from_load }};
+
+				        } else {
+					        $("#moregoods-content").append('<div class="moregoods-clear"></div><p class="text-not">{{ error_view_js }}</p>');
+						    setTimeout(function(){ $('.swdload-gif img').remove(); }, 700);
+						
+						    isProgress = true;
+					    }
+					} else {
+					    $("#moregoods-content").append('<div class="moregoods-clear"></div><p class="text-not">' + json.response + '</p>');
+						$('.swdload-gif img').remove();
+					}
+		    	}
+	   		});
+		}
+	});
+	{% else %}
+	$('#swdgoods-morebtn').click(function() {
+	
+	    var dataStr = {
+	    	start: instartFrom,
+	    	mod_id: {{ modul_id }},
+			limit_load: {{ instart_from_load }} 
+	        }; 
+			
+	    if(!isProgress) {
+		    isProgress = true;
+			
+			$.ajax({
+				type: 'POST',
+			 	url: 'index.php?route=extension/module/more_goods/swd_more',
+				dataType: 'json',
+				data: dataStr,
+				cache: false,
+				beforeSend: function(){
+        	   		$('.swdload-gif').prepend('<div><img src="' + load_gif + '" /></div>').show();
+					$('#swdgoods-morebtn').prop('disabled', true);
+       		 	},
+				success: function(json){
+				
+				    if(json.success != 'error') {
+					
+				   	    if(json.success) {
+					        setTimeout(function(){
+						            $('.swdload-gif img').remove();
+						            $("#moregoods-content").append(json.response);
+									$('#swdgoods-morebtn').prop('disabled', false);
+								   }, 700);
+						
+						    isProgress = false;
+						    instartFrom += {{ instart_from_load }};
+				        } else {
+					        $("#moregoods-content").append('<div class="moregoods-clear"></div><p class="text-not">{{ error_view_js }}</p>');
+						    setTimeout(function(){ 
+						        $('.swdload-gif img').remove();
+							    $('.btn-swdmoregoods').hide();
+						    }, 500);
+						
+						    isProgress = true;
+					    }
+					} else {
+					    $("#moregoods-content").append('<div class="moregoods-clear"></div><p class="text-not">' + json.response + '</p>');
+						$('.swdload-gif img').remove();
+					}
+		    	}
+	   		});
+		}
+	});
+	{% endif %}
+});
+//--></script> 
